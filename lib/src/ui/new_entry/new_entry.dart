@@ -10,6 +10,8 @@ import 'package:medminder/src/common/convert_time.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:medminder/src/ui/success_screen/success_screen.dart';
 import 'package:medminder/src/ui/homepage.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 class NewEntry extends StatefulWidget {
   @override
   _NewEntryState createState() => _NewEntryState();
@@ -21,8 +23,8 @@ class _NewEntryState extends State<NewEntry> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   NewEntryBloc _newEntryBloc;
 
-  Medicines medicines= new Medicines();
-  String iconValue= "";
+  Medicines medicines = new Medicines();
+  String iconValue = "";
 
   GlobalKey<ScaffoldState> _scaffoldKey;
 
@@ -116,45 +118,45 @@ class _NewEntryState extends State<NewEntry> {
                   stream: _newEntryBloc.selectedMedicineType,
                   builder: (context, snapshot) {
                     return Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           GestureDetector(
-                            onTap:(){
-
-                            },
+                              onTap: () {},
+                              child: Expanded(
+                                  child: MedicineTypeColumn(
+                                      type: MedicineType.Bottle,
+                                      name: "Bottle",
+                                      icon: FontAwesomeIcons.prescriptionBottle,
+                                      isSelected:
+                                          snapshot.data == MedicineType.Bottle
+                                              ? true
+                                              : false))),
+                          Expanded(
                               child: MedicineTypeColumn(
-                              type: MedicineType.Bottle,
-                              name: "Bottle",
-                              iconValue: 0xe900,
-                              isSelected:
-                              snapshot.data == MedicineType.Bottle
-                                  ? true
-                                  : false)),
-                          MedicineTypeColumn(
-                              type: MedicineType.Pill,
-                              name: "Pill",
-                              iconValue: 0xe901,
-                              isSelected:
-                              snapshot.data == MedicineType.Pill
-                                  ? true
-                                  : false),
-                          MedicineTypeColumn(
-                              type: MedicineType.Syringe,
-                              name: "Syringe",
-                              iconValue: 0xe902,
-                              isSelected:
-                              snapshot.data == MedicineType.Syringe
-                                  ? true
-                                  : false),
-                          MedicineTypeColumn(
-                              type: MedicineType.Tablet,
-                              name: "Tablet",
-                              iconValue: 0xe903,
-                              isSelected:
-                              snapshot.data == MedicineType.Tablet
-                                  ? true
-                                  : false),
+                                  type: MedicineType.Pill,
+                                  name: "Pill",
+                                  icon: FontAwesomeIcons.pills,
+                                  isSelected: snapshot.data == MedicineType.Pill
+                                      ? true
+                                      : false)),
+                          Expanded(
+                              child: MedicineTypeColumn(
+                                  type: MedicineType.Syringe,
+                                  name: "Syringe",
+                                  icon: FontAwesomeIcons.syringe,
+                                  isSelected:
+                                      snapshot.data == MedicineType.Syringe
+                                          ? true
+                                          : false)),
+                          Expanded(
+                              child: MedicineTypeColumn(
+                                  type: MedicineType.Tablet,
+                                  name: "Tablet",
+                                  icon: FontAwesomeIcons.tablets,
+                                  isSelected:
+                                      snapshot.data == MedicineType.Tablet
+                                          ? true
+                                          : false)),
                         ]);
                   },
                 ),
@@ -174,14 +176,8 @@ class _NewEntryState extends State<NewEntry> {
               ),
               Padding(
                 padding: EdgeInsets.only(
-                  left: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.08,
-                  right: MediaQuery
-                      .of(context)
-                      .size
-                      .height * 0.08,
+                  left: MediaQuery.of(context).size.height * 0.08,
+                  right: MediaQuery.of(context).size.height * 0.08,
                 ),
                 child: Container(
                   width: 220,
@@ -191,19 +187,19 @@ class _NewEntryState extends State<NewEntry> {
                     shape: StadiumBorder(),
                     child: Center(
                         child: Text(
-                          "Confirm",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700),
-                        )),
+                      "Confirm",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700),
+                    )),
                     onPressed: () {
-                      Medicine medicine= new Medicine(
+                      Medicine medicine = new Medicine(
 //                          medicineName: nameController.text, dosage: int.parse(dosageController.text),
 //                          medicineType: MedicineTypeColumn().iconValue.toString(), interval: IntervalSelectionState()._selected,
 //                          startTime: SelectTimeState()._selectTime(context).toString()
-                      );
-                       medicines.medicines.add(medicine);
+                          );
+                      medicines.medicines.add(medicine);
 
 //                      String medicineName;
 //                      int dosage;
@@ -229,7 +225,7 @@ class _NewEntryState extends State<NewEntry> {
 //                        interval: interval,
 //                        startTime: startTime,
 //                      );
-                   //   _globalBloc.updateMedicineList(newEntryMedicine);
+                      //   _globalBloc.updateMedicineList(newEntryMedicine);
 
                       Navigator.pushReplacement(
                         context,
@@ -249,23 +245,26 @@ class _NewEntryState extends State<NewEntry> {
       ),
     );
   }
-  List<int> makeIDs(double n){
+
+  List<int> makeIDs(double n) {
     var rng = Random();
     List<int> ids = [];
-    for (int i = 0; i <n; i++){
+    for (int i = 0; i < n; i++) {
       ids.add(rng.nextInt(1000000000));
     }
     return ids;
   }
+
   initializeNotifications() async {
     var initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/launcher_icon');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
   }
+
   Future onSelectNotification(String payload) async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
@@ -275,6 +274,7 @@ class _NewEntryState extends State<NewEntry> {
       new MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
+
   Future<void> scheduleNotification(Medicine medicine) async {
     var hour = int.parse(medicine.startTime[0] + medicine.startTime[1]);
     var ogValue = hour;
@@ -285,7 +285,7 @@ class _NewEntryState extends State<NewEntry> {
       'repeatDailyAtTime channel name',
       'repeatDailyAtTime description',
       importance: Importance.Max,
-     // sound: 'sound',
+      // sound: 'sound',
       ledColor: Color(0xFF3EB16F),
       ledOffMs: 1000,
       ledOnMs: 1000,
@@ -314,80 +314,83 @@ class _NewEntryState extends State<NewEntry> {
     //await flutterLocalNotificationsPlugin.cancelAll();
   }
 }
+
 class IntervalSelection extends StatefulWidget {
   @override
   IntervalSelectionState createState() => IntervalSelectionState();
 }
 
 class IntervalSelectionState extends State<IntervalSelection> {
-var _intervals = [
-  6,
-  8,
-  12,
-  24,
-];
-var _selected = 0;
-@override
+  var _intervals = [
+    6,
+    8,
+    12,
+    24,
+  ];
+  var _selected = 0;
+  @override
   Widget build(BuildContext context) {
     final NewEntryBloc _newEntryBloc = Provider.of<NewEntryBloc>(context);
-    return Padding(padding: EdgeInsets.only(top: 8.0),
+    return Padding(
+      padding: EdgeInsets.only(top: 8.0),
       child: Container(
         child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text("Remind Me every",
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-          ),
-          ),
-          DropdownButton<int>(
-            iconEnabledColor: Color(0xFF3EB16F),
-            hint: _selected == 0
-                ? Text(
-              "Select an Interval",
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              "Remind Me every",
               style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400),
-            )
-                : null,
-            elevation: 4,
-            value: _selected == 0 ? null : _selected,
-            items: _intervals.map((int value) {
-              return DropdownMenuItem<int>(
-                value: value,
-                child: Text(
-                  value.toString(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: (newVal) {
-              setState(() {
-                _selected = newVal;
-                _newEntryBloc.updateInterval(newVal);
-              });
-            },
-          ),
-          Text(
-            _selected == 1 ? " hour" : " hours",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-        ],
+            DropdownButton<int>(
+              iconEnabledColor: Color(0xFF3EB16F),
+              hint: _selected == 0
+                  ? Text(
+                      "Select an Interval",
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
+                    )
+                  : null,
+              elevation: 4,
+              value: _selected == 0 ? null : _selected,
+              items: _intervals.map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (newVal) {
+                setState(() {
+                  _selected = newVal;
+                  _newEntryBloc.updateInterval(newVal);
+                });
+              },
+            ),
+            Text(
+              _selected == 1 ? " hour" : " hours",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
     );
-}
+  }
 }
 
 class SelectTime extends StatefulWidget {
@@ -447,14 +450,14 @@ class SelectTimeState extends State<SelectTime> {
 class MedicineTypeColumn extends StatelessWidget {
   final MedicineType type;
   final String name;
-  final int iconValue;
+  final IconData icon;
   final bool isSelected;
 
   MedicineTypeColumn(
       {Key key,
       @required this.type,
       @required this.name,
-      @required this.iconValue,
+      @required this.icon,
       @required this.isSelected})
       : super(key: key);
 
@@ -467,6 +470,7 @@ class MedicineTypeColumn extends StatelessWidget {
         },
         child: Column(children: <Widget>[
           Container(
+              margin: EdgeInsets.only(left: 5.0, right: 5.0),
               width: 85,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -475,9 +479,9 @@ class MedicineTypeColumn extends StatelessWidget {
               child: Center(
                   child: Padding(
                 padding: EdgeInsets.only(top: 14.0),
-                child: Icon(
-                  IconData(iconValue, fontFamily: "Ic"),
-                  size: 75,
+                child: FaIcon(
+                  icon,
+                  size: 60,
                   color: isSelected ? Colors.white : Color(0xFF3EB16F),
                 ),
               ))),
