@@ -11,6 +11,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:medminder/src/ui/success_screen/success_screen.dart';
 import 'package:medminder/src/ui/homepage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class NewEntry extends StatefulWidget {
   @override
@@ -23,8 +25,9 @@ class _NewEntryState extends State<NewEntry> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   NewEntryBloc _newEntryBloc;
 
-  Medicines medicines = new Medicines();
+  List<Medicine> medicineList = [];
   String iconValue = "";
+  MedicineTypeModel selectedMedicineType;
 
   GlobalKey<ScaffoldState> _scaffoldKey;
 
@@ -35,6 +38,7 @@ class _NewEntryState extends State<NewEntry> {
     _newEntryBloc.dispose();
   }
 
+  @override
   void initState() {
     super.initState();
     _newEntryBloc = NewEntryBloc();
@@ -43,6 +47,18 @@ class _NewEntryState extends State<NewEntry> {
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     initializeNotifications();
+    this.selectedMedicineType = new MedicineTypeModel();
+
+    getMedicines();
+  }
+
+  Future<Medicines> getMedicines() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String medicines = preferences.getString("medicines");
+    var medicinesList = Medicines.fromJson(json.decode(medicines));
+
+    this.medicineList = medicinesList.medicines;
+    return medicinesList;
   }
 
   @override
@@ -120,9 +136,22 @@ class _NewEntryState extends State<NewEntry> {
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
-                          GestureDetector(
-                              onTap: () {},
-                              child: Expanded(
+                          Expanded(
+                              child: GestureDetector(
+                                  onTap: () {
+                                    setState(() => this.selectedMedicineType =
+                                            MedicineTypeModel(
+                                                type: MedicineType.Bottle,
+                                                name: "Bottle",
+                                                icon: FontAwesomeIcons
+                                                    .prescriptionBottle,
+                                                isSelected: snapshot.data ==
+                                                        MedicineType.Bottle
+                                                    ? true
+                                                    : false)
+                                        // print(this.selectedMedicineType.name);
+                                        );
+                                  },
                                   child: MedicineTypeColumn(
                                       type: MedicineType.Bottle,
                                       name: "Bottle",
@@ -174,32 +203,34 @@ class _NewEntryState extends State<NewEntry> {
               SizedBox(
                 height: 35,
               ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.height * 0.08,
-                  right: MediaQuery.of(context).size.height * 0.08,
-                ),
-                child: Container(
-                  width: 220,
-                  height: 70,
-                  child: FlatButton(
-                    color: Color(0xFF3EB16F),
-                    shape: StadiumBorder(),
-                    child: Center(
-                        child: Text(
-                      "Confirm",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700),
-                    )),
-                    onPressed: () {
-                      Medicine medicine = new Medicine(
-//                          medicineName: nameController.text, dosage: int.parse(dosageController.text),
-//                          medicineType: MedicineTypeColumn().iconValue.toString(), interval: IntervalSelectionState()._selected,
-//                          startTime: SelectTimeState()._selectTime(context).toString()
-                          );
-                      medicines.medicines.add(medicine);
+              Row(children: <Widget>[
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.only(),
+                  child: Container(
+                    width: 220,
+                    height: 50,
+                    child: FlatButton(
+                      color: Color(0xFF007bff),
+                      shape: StadiumBorder(),
+                      child: Center(
+                          child: Text(
+                        "Add new",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700),
+                      )),
+                      onPressed: () {
+                        Medicine medicine = new Medicine(
+                            medicineName: nameController.text,
+                            dosage: int.parse(dosageController.text),
+                            medicineType: this.selectedMedicineType,
+                            interval: IntervalSelectionState()._selected,
+                            startTime: SelectTimeState()
+                                ._selectTime(context)
+                                .toString());
+                        medicineList.add(medicine);
 
 //                      String medicineName;
 //                      int dosage;
@@ -225,20 +256,74 @@ class _NewEntryState extends State<NewEntry> {
 //                        interval: interval,
 //                        startTime: startTime,
 //                      );
-                      //   _globalBloc.updateMedicineList(newEntryMedicine);
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return HomePage();
-                          },
-                        ),
-                      );
-                    },
+                        //   _globalBloc.updateMedicineList(newEntryMedicine);
+                      },
+                    ),
                   ),
-                ),
-              ),
+                )),
+                SizedBox(width: 10.0),
+                Expanded(
+                    child: Padding(
+                  padding: EdgeInsets.only(),
+                  child: Container(
+                    width: 220,
+                    height: 50,
+                    child: FlatButton(
+                      color: Color(0xFF3EB16F),
+                      shape: StadiumBorder(),
+                      child: Center(
+                          child: Text(
+                        "Save",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700),
+                      )),
+                      onPressed: () async {
+                        Medicines medicines = new Medicines();
+                        SharedPreferences preferences =
+                            await SharedPreferences.getInstance();
+                        String medicinesList = json.encode(medicineList);
+                        preferences.setString("medicines", medicinesList);
+//                      String medicineName;
+//                      int dosage;
+//                      String medicineType = _newEntryBloc
+//                          .selectedMedicineType.value
+//                          .toString()
+//                          .substring(13);
+//                      int interval = _newEntryBloc.selectedInterval$.value;
+//                      String startTime = _newEntryBloc.selectedTimeOfDay$.value;
+//
+//                      List<int> intIDs =
+//                      makeIDs(24/_newEntryBloc.selectedInterval$.value);
+//                      List<String> notificationIDs = intIDs
+//                          .map((i) => i.toString())
+//                      .toList(); //for Shared preference
+//
+//
+//                      Medicine newEntryMedicine = Medicine(
+//                        notificationIDs: notificationIDs,
+//                        medicineName: medicineName,
+//                        dosage: dosage,
+//                        medicineType: medicineType,
+//                        interval: interval,
+//                        startTime: startTime,
+//                      );
+                        //   _globalBloc.updateMedicineList(newEntryMedicine);
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return HomePage();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ))
+              ]),
             ],
           ),
         ),
@@ -257,7 +342,7 @@ class _NewEntryState extends State<NewEntry> {
 
   initializeNotifications() async {
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/launcher_icon');
+        AndroidInitializationSettings('mediminder_logo');
     var initializationSettingsIOS = IOSInitializationSettings();
     var initializationSettings = InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -305,7 +390,7 @@ class _NewEntryState extends State<NewEntry> {
           int.parse(medicine.notificationIDs[i]),
           'Mediminder: ${medicine.medicineName}',
           medicine.medicineType.toString() != MedicineType.None.toString()
-              ? 'It is time to take your ${medicine.medicineType.toLowerCase()}, according to schedule'
+              ? 'It is time to take your ${medicine.medicineType.name}, according to schedule'
               : 'It is time to take your medicine, according to schedule',
           Time(hour, minute, 0),
           platformChannelSpecifics);

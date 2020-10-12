@@ -185,7 +185,7 @@ class MainSection extends StatelessWidget {
   Hero makeIcon(double size) {
     if (medicine.medicineType == "Bottle") {
       return Hero(
-        tag: medicine.medicineName + medicine.medicineType,
+        tag: medicine.medicineName + medicine.medicineType.name,
         child: Icon(
           IconData(0xe900, fontFamily: "Ic"),
           color: Color(0xFF3EB16F),
@@ -194,7 +194,7 @@ class MainSection extends StatelessWidget {
       );
     } else if (medicine.medicineType == "Pill") {
       return Hero(
-        tag: medicine.medicineName + medicine.medicineType,
+        tag: medicine.medicineName + medicine.medicineType.name,
         child: Icon(
           IconData(0xe901, fontFamily: "Ic"),
           color: Color(0xFF3EB16F),
@@ -203,7 +203,7 @@ class MainSection extends StatelessWidget {
       );
     } else if (medicine.medicineType == "Syringe") {
       return Hero(
-        tag: medicine.medicineName + medicine.medicineType,
+        tag: medicine.medicineName + medicine.medicineType.name,
         child: Icon(
           IconData(0xe902, fontFamily: "Ic"),
           color: Color(0xFF3EB16F),
@@ -212,7 +212,7 @@ class MainSection extends StatelessWidget {
       );
     } else if (medicine.medicineType == "Tablet") {
       return Hero(
-        tag: medicine.medicineName + medicine.medicineType,
+        tag: medicine.medicineName + medicine.medicineType.name,
         child: Icon(
           IconData(0xe903, fontFamily: "Ic"),
           color: Color(0xFF3EB16F),
@@ -221,7 +221,7 @@ class MainSection extends StatelessWidget {
       );
     }
     return Hero(
-      tag: medicine.medicineName + medicine.medicineType,
+      tag: medicine.medicineName + medicine.medicineType.name,
       child: Icon(
         Icons.local_hospital,
         color: Color(0xFF3EB16F),
