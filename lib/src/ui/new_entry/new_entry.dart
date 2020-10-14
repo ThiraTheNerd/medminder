@@ -280,7 +280,15 @@ class _NewEntryState extends State<NewEntry> {
                             fontWeight: FontWeight.w700),
                       )),
                       onPressed: () async {
-                        Medicines medicines = new Medicines();
+                        Medicine medicine = new Medicine(
+                            medicineName: nameController.text,
+                            dosage: int.parse(dosageController.text),
+                            medicineType: this.selectedMedicineType,
+                            interval: IntervalSelectionState()._selected,
+                            startTime: SelectTimeState()
+                                ._selectTime(context)
+                                .toString());
+                        medicineList.add(medicine);
                         SharedPreferences preferences =
                             await SharedPreferences.getInstance();
                         String medicinesList = json.encode(medicineList);
